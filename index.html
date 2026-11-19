@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#f5f3ed">
   <title>學測英文升等練習</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="review.css">
 </head>
 <body>
   <main class="shell">
@@ -27,7 +28,7 @@
     <section class="dashboard" aria-label="學習進度">
       <div class="stat-card level-card"><div class="stat-icon">↗</div><div><span class="stat-label">目前等級</span><strong id="level-name">初階・Lv. 1</strong><span class="stat-sub" id="level-hint">從基礎開始累積</span></div></div>
       <div class="stat-card xp-card"><div class="stat-top"><span class="stat-label">升級經驗值</span><strong><span id="xp-current">0</span><small> / <span id="xp-next">100</span> XP</small></strong></div><div class="progress-track"><div class="progress-fill" id="xp-fill"></div></div><span class="stat-sub">答對一題獲得 20 XP</span></div>
-      <div class="stat-card streak-card"><div class="stat-icon streak-icon">✳</div><div><span class="stat-label">累積答對</span><strong><span id="correct-count">0</span> 題</strong><span class="stat-sub">每一次練習都算數</span></div></div>
+      <div class="stat-card streak-card"><div class="stat-icon streak-icon">✳</div><div><span class="stat-label">累積答對</span><strong><span id="correct-count">0</span> 題</strong><span class="stat-sub">已練習 <span id="attempt-count">0</span> 題</span></div></div>
     </section>
 
     <section class="practice-section" id="practice">
@@ -43,7 +44,7 @@
         <h3 id="question-text">The library is a quiet place to _____ books.</h3>
         <div class="answers" id="answers"></div>
         <div class="feedback" id="feedback" aria-live="polite" hidden></div>
-        <div class="quiz-bottom"><span>答對可獲得 <b>+20 XP</b></span><button class="next-button" id="next-button" hidden>下一題 <span>→</span></button></div>
+        <div class="quiz-bottom"><button class="review-button" id="review-button" hidden>複習錯題 <span id="review-count">0</span></button><span>答對可獲得 <b>+20 XP</b></span><button class="next-button" id="next-button" hidden>下一題 <span>→</span></button></div>
       </article>
       <p class="disclaimer">練習題為本專案自編示例，程度標籤是學習路徑參考，並非正式學測級分預測。</p>
     </section>

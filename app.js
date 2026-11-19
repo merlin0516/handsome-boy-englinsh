@@ -31,11 +31,15 @@ const questionSets = {
   ]
 };
 const levelNames = { beginner: '初階', intermediate: '中階', advanced: '進階' };
-const defaultState = { level: 'beginner', xp: 0, correct: 0, answered: {} };
+const defaultState = { level: 'beginner', xp: 0, correct: 0, answered: {}, attempts: {}, missed: {} };
 let state;
 try { state = { ...defaultState, ...JSON.parse(localStorage.getItem('examEnglishProgress') || '{}') }; } catch { state = { ...defaultState }; }
+state.answered ||= {};
+state.attempts ||= {};
+state.missed ||= {};
 let questionIndex = 0;
 let locked = false;
+let reviewQueue = null;
 const $ = (id) => document.getElementById(id);
 
 function renderStats() {
@@ -46,8 +50,12 @@ function renderStats() {
   $('xp-current').textContent = current;
   $('xp-next').textContent = 100;
   $('xp-fill').style.width = `${current}%`;
-  $('correct-count').textContent = state.correct;
+  $('correct-count').textContent = Object.keys(state.answered).length;
+  $('attempt-count').textContent = Object.values(state.attempts).reduce((sum, count) => sum + count, 0);
   $('level-count').textContent = String(Math.min(99, level)).padStart(2, '0');
+  const missedCount = Object.keys(state.missed).filter((key) => key.startsWith(`${state.level}:`)).length;
+  $('review-count').textContent = missedCount;
+  $('review-button').hidden = missedCount === 0 || reviewQueue !== null;
 }
 function save() {
   localStorage.setItem('examEnglishProgress', JSON.stringify(state));
@@ -55,14 +63,16 @@ function save() {
 }
 function renderQuestion() {
   const set = questionSets[state.level];
-  const q = set[questionIndex % set.length];
+  const currentIndex = reviewQueue ? reviewQueue[questionIndex] : questionIndex % set.length;
+  const q = set[currentIndex];
   locked = false;
   $('question-tag').textContent = `${q.tag} · ${levelNames[state.level]}`;
-  $('question-count').textContent = `TODAY'S QUESTION ${String(questionIndex + 1).padStart(2, '0')}`;
+  $('question-count').textContent = reviewQueue ? `錯題複習 ${questionIndex + 1} / ${reviewQueue.length}` : `TODAY'S QUESTION ${String(questionIndex + 1).padStart(2, '0')}`;
   $('question-text').textContent = q.prompt;
   $('feedback').hidden = true;
   $('feedback').className = 'feedback';
   $('next-button').hidden = true;
+  renderStats();
   $('answers').replaceChildren(...q.choices.map((choice, i) => {
     const button = document.createElement('button');
     button.className = 'answer';
@@ -78,28 +88,42 @@ function answer(selected, q, button) {
   buttons.forEach((b, i) => { b.disabled = true; if (i === q.answer) b.classList.add('correct'); });
   const feedback = $('feedback');
   feedback.hidden = false;
+  const key = `${state.level}:${reviewQueue ? reviewQueue[questionIndex] : questionIndex % questionSets[state.level].length}`;
+  state.attempts[key] = (state.attempts[key] || 0) + 1;
   if (selected === q.answer) {
-    const key = `${state.level}:${questionIndex % questionSets[state.level].length}`;
     if (!state.answered[key]) { state.xp += 20; state.correct += 1; state.answered[key] = true; }
+    delete state.missed[key];
     feedback.textContent = `答對了！${q.explain}${state.answered[key] && state.xp % 100 === 0 ? ' 升級經驗值已滿！' : ''}`;
     save();
   } else {
     button.classList.add('incorrect');
+    state.missed[key] = true;
     feedback.classList.add('wrong');
     feedback.textContent = `再看一次：${q.explain}`;
+    save();
   }
   $('next-button').hidden = false;
 }
 document.querySelectorAll('.level-option').forEach((button) => button.addEventListener('click', () => {
   state.level = button.dataset.level;
   questionIndex = 0;
+  reviewQueue = null;
   document.querySelectorAll('.level-option').forEach((item) => item.classList.toggle('active', item === button));
   save(); renderQuestion();
 }));
-$('next-button').addEventListener('click', () => { questionIndex += 1; renderQuestion(); });
+$('next-button').addEventListener('click', () => {
+  questionIndex += 1;
+  if (reviewQueue && questionIndex >= reviewQueue.length) { reviewQueue = null; questionIndex = 0; }
+  renderQuestion();
+});
+$('review-button').addEventListener('click', () => {
+  reviewQueue = Object.keys(state.missed).filter((key) => key.startsWith(`${state.level}:`)).map((key) => Number(key.split(':')[1]));
+  questionIndex = 0;
+  if (reviewQueue.length) renderQuestion();
+});
 $('reset-button').addEventListener('click', () => {
   if (!window.confirm('確定要清除這台裝置儲存的練習進度嗎？')) return;
-  state = { ...defaultState, answered: {} }; questionIndex = 0;
+  state = { ...defaultState, answered: {}, attempts: {}, missed: {} }; questionIndex = 0; reviewQueue = null;
   document.querySelectorAll('.level-option').forEach((item) => item.classList.toggle('active', item.dataset.level === state.level));
   save(); renderQuestion();
 });
