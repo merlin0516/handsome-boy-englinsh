@@ -31,12 +31,19 @@ const questionSets = {
   ]
 };
 const levelNames = { beginner: '初階', intermediate: '中階', advanced: '進階' };
-const defaultState = { level: 'beginner', xp: 0, correct: 0, answered: {}, attempts: {}, missed: {} };
+const writingPrompts = {
+  beginner: { label: '初階引導', text: 'Write 3–4 sentences about a place you like. Say where it is, what you do there, and why you like it.' },
+  intermediate: { label: '中階練習', text: 'Some students prefer studying alone, while others learn better in groups. Write a short paragraph explaining which you prefer and give two reasons.' },
+  advanced: { label: '進階挑戰', text: 'Should cities invest more in public transportation even when the projects are expensive? State your position, support it with reasons or examples, and briefly address another point of view.' }
+};
+const defaultState = { level: 'beginner', xp: 0, correct: 0, answered: {}, attempts: {}, missed: {}, drafts: {}, writingChecks: {} };
 let state;
 try { state = { ...defaultState, ...JSON.parse(localStorage.getItem('examEnglishProgress') || '{}') }; } catch { state = { ...defaultState }; }
 state.answered ||= {};
 state.attempts ||= {};
 state.missed ||= {};
+state.drafts ||= {};
+state.writingChecks ||= {};
 let questionIndex = 0;
 let locked = false;
 let reviewQueue = null;
@@ -81,6 +88,20 @@ function renderQuestion() {
     return button;
   }));
 }
+function renderWriting() {
+  const prompt = writingPrompts[state.level];
+  $('writing-level').textContent = prompt.label;
+  $('writing-prompt').textContent = prompt.text;
+  $('writing-response').value = state.drafts[state.level] || '';
+  updateWordCount();
+  document.querySelectorAll('[data-check]').forEach((input) => {
+    input.checked = Boolean(state.writingChecks[`${state.level}:${input.dataset.check}`]);
+  });
+}
+function updateWordCount() {
+  const words = $('writing-response').value.match(/[A-Za-z]+(?:['’][A-Za-z]+)*/g) || [];
+  $('word-count').textContent = `${words.length} ${words.length === 1 ? 'word' : 'words'}`;
+}
 function answer(selected, q, button) {
   if (locked) return;
   locked = true;
@@ -91,9 +112,10 @@ function answer(selected, q, button) {
   const key = `${state.level}:${reviewQueue ? reviewQueue[questionIndex] : questionIndex % questionSets[state.level].length}`;
   state.attempts[key] = (state.attempts[key] || 0) + 1;
   if (selected === q.answer) {
-    if (!state.answered[key]) { state.xp += 20; state.correct += 1; state.answered[key] = true; }
+    const earnedXp = !state.answered[key];
+    if (earnedXp) { state.xp += 20; state.correct += 1; state.answered[key] = true; }
     delete state.missed[key];
-    feedback.textContent = `答對了！${q.explain}${state.answered[key] && state.xp % 100 === 0 ? ' 升級經驗值已滿！' : ''}`;
+    feedback.textContent = `答對了！${q.explain}${earnedXp && state.xp % 100 === 0 ? ' 升級經驗值已滿！' : ''}`;
     save();
   } else {
     button.classList.add('incorrect');
@@ -109,7 +131,18 @@ document.querySelectorAll('.level-option').forEach((button) => button.addEventLi
   questionIndex = 0;
   reviewQueue = null;
   document.querySelectorAll('.level-option').forEach((item) => item.classList.toggle('active', item === button));
-  save(); renderQuestion();
+  save(); renderQuestion(); renderWriting();
+}));
+$('writing-response').addEventListener('input', () => {
+  state.drafts[state.level] = $('writing-response').value;
+  updateWordCount();
+  save();
+});
+document.querySelectorAll('[data-check]').forEach((input) => input.addEventListener('change', () => {
+  const key = `${state.level}:${input.dataset.check}`;
+  if (input.checked) state.writingChecks[key] = true;
+  else delete state.writingChecks[key];
+  save();
 }));
 $('next-button').addEventListener('click', () => {
   questionIndex += 1;
@@ -123,10 +156,11 @@ $('review-button').addEventListener('click', () => {
 });
 $('reset-button').addEventListener('click', () => {
   if (!window.confirm('確定要清除這台裝置儲存的練習進度嗎？')) return;
-  state = { ...defaultState, answered: {}, attempts: {}, missed: {} }; questionIndex = 0; reviewQueue = null;
+  state = { ...defaultState, answered: {}, attempts: {}, missed: {}, drafts: {}, writingChecks: {} }; questionIndex = 0; reviewQueue = null;
   document.querySelectorAll('.level-option').forEach((item) => item.classList.toggle('active', item.dataset.level === state.level));
-  save(); renderQuestion();
+  save(); renderQuestion(); renderWriting();
 });
 renderStats();
 document.querySelectorAll('.level-option').forEach((item) => item.classList.toggle('active', item.dataset.level === state.level));
 renderQuestion();
+renderWriting();

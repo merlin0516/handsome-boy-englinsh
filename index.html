@@ -7,6 +7,7 @@
   <title>學測英文升等練習</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="review.css">
+  <link rel="stylesheet" href="writing.css">
 </head>
 <body>
   <main class="shell">
@@ -47,6 +48,16 @@
         <div class="quiz-bottom"><button class="review-button" id="review-button" hidden>複習錯題 <span id="review-count">0</span></button><span>答對可獲得 <b>+20 XP</b></span><button class="next-button" id="next-button" hidden>下一題 <span>→</span></button></div>
       </article>
       <p class="disclaimer">練習題為本專案自編示例，程度標籤是學習路徑參考，並非正式學測級分預測。</p>
+
+      <section class="writing-card" aria-labelledby="writing-title">
+        <div class="writing-heading"><div><p class="eyebrow">WRITE A LITTLE</p><h2 id="writing-title">短寫作練習</h2></div><span class="writing-level" id="writing-level">初階引導</span></div>
+        <p class="writing-prompt" id="writing-prompt"></p>
+        <label class="sr-only" for="writing-response">英文寫作草稿</label>
+        <textarea id="writing-response" rows="6" placeholder="Write your ideas in English..."></textarea>
+        <div class="writing-meta"><span id="word-count">0 words</span><span>草稿會保存在這台裝置</span></div>
+        <div class="self-check"><strong>完成後自我檢查</strong><label><input type="checkbox" data-check="purpose"> 我有回答題目要求</label><label><input type="checkbox" data-check="sentences"> 我檢查了句子與動詞</label><label><input type="checkbox" data-check="coherence"> 我的想法有清楚連接</label></div>
+        <p class="writing-note">自我檢查是練習提示，不是正式評分；如需教師回饋，可將草稿帶去討論。</p>
+      </section>
     </section>
 
     <footer><span>LEARN AT YOUR OWN PACE.</span><button id="reset-button" class="reset-button">重設本機進度</button><span>學測英文升等計畫</span></footer>
