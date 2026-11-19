@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f3ed">
+  <title>學測英文升等練習</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="學測英文升等練習首頁"><span class="brand-mark">E</span><span>學測英文<span class="muted"> / LEVEL UP</span></span></a>
+      <span class="saved-note" id="saved-note">進度儲存在這台裝置</span>
+    </header>
+
+    <section class="hero" id="top">
+      <div class="hero-copy">
+        <p class="eyebrow">YOUR NEXT LEVEL STARTS HERE</p>
+        <h1>每天前進一點，<br><em>英文就會不一樣。</em></h1>
+        <p class="hero-text">選擇適合現在的挑戰，完成一題、累積一點經驗。從學測常見字彙與閱讀開始，穩穩練出實力。</p>
+        <a class="text-link" href="#practice">開始今天的練習 <span>↓</span></a>
+      </div>
+      <div class="hero-art" aria-hidden="true"><div class="sun"></div><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="art-card"><span>DAY <b id="day-count">01</b></span><strong>Keep<br>going.</strong><small>SMALL STEPS, BIG GROWTH</small></div><span class="spark spark-one">✳</span><span class="spark spark-two">✦</span></div>
+    </section>
+
+    <section class="dashboard" aria-label="學習進度">
+      <div class="stat-card level-card"><div class="stat-icon">↗</div><div><span class="stat-label">目前等級</span><strong id="level-name">初階・Lv. 1</strong><span class="stat-sub" id="level-hint">從基礎開始累積</span></div></div>
+      <div class="stat-card xp-card"><div class="stat-top"><span class="stat-label">升級經驗值</span><strong><span id="xp-current">0</span><small> / <span id="xp-next">100</span> XP</small></strong></div><div class="progress-track"><div class="progress-fill" id="xp-fill"></div></div><span class="stat-sub">答對一題獲得 20 XP</span></div>
+      <div class="stat-card streak-card"><div class="stat-icon streak-icon">✳</div><div><span class="stat-label">累積答對</span><strong><span id="correct-count">0</span> 題</strong><span class="stat-sub">每一次練習都算數</span></div></div>
+    </section>
+
+    <section class="practice-section" id="practice">
+      <div class="section-heading"><div><p class="eyebrow">PICK YOUR CHALLENGE</p><h2>選擇你的練習程度</h2></div><p class="section-desc">可以依自己的狀況切換，<br>找到剛剛好的挑戰。</p></div>
+      <div class="level-picker" role="group" aria-label="選擇練習程度">
+        <button class="level-option active" data-level="beginner"><span class="level-number">01</span><span class="level-title">初階</span><span class="level-description">基礎字彙・核心句型</span><span class="level-arrow">↗</span></button>
+        <button class="level-option" data-level="intermediate"><span class="level-number">02</span><span class="level-title">中階</span><span class="level-description">常見用法・段落理解</span><span class="level-arrow">↗</span></button>
+        <button class="level-option" data-level="advanced"><span class="level-number">03</span><span class="level-title">進階</span><span class="level-description">語境判讀・進階閱讀</span><span class="level-arrow">↗</span></button>
+      </div>
+
+      <article class="quiz-card">
+        <div class="quiz-top"><div><span class="question-tag" id="question-tag">VOCABULARY · 初階</span><span class="question-count" id="question-count">TODAY'S QUESTION 01</span></div><span class="question-mark">?</span></div>
+        <h3 id="question-text">The library is a quiet place to _____ books.</h3>
+        <div class="answers" id="answers"></div>
+        <div class="feedback" id="feedback" aria-live="polite" hidden></div>
+        <div class="quiz-bottom"><span>答對可獲得 <b>+20 XP</b></span><button class="next-button" id="next-button" hidden>下一題 <span>→</span></button></div>
+      </article>
+      <p class="disclaimer">練習題為本專案自編示例，程度標籤是學習路徑參考，並非正式學測級分預測。</p>
+    </section>
+
+    <footer><span>LEARN AT YOUR OWN PACE.</span><button id="reset-button" class="reset-button">重設本機進度</button><span>學測英文升等計畫</span></footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
