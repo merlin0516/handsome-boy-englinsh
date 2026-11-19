@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="review.css">
   <link rel="stylesheet" href="writing.css">
+  <link rel="stylesheet" href="weekly.css">
 </head>
 <body>
   <main class="shell">
@@ -39,6 +40,13 @@
         <button class="level-option" data-level="intermediate"><span class="level-number">02</span><span class="level-title">中階</span><span class="level-description">常見用法・段落理解</span><span class="level-arrow">↗</span></button>
         <button class="level-option" data-level="advanced"><span class="level-number">03</span><span class="level-title">進階</span><span class="level-description">語境判讀・進階閱讀</span><span class="level-arrow">↗</span></button>
       </div>
+
+      <section class="weekly-card" aria-labelledby="weekly-title">
+        <div class="weekly-heading"><div><p class="eyebrow">YOUR WEEKLY RHYTHM</p><h2 id="weekly-title">本週學習清單</h2></div><span class="weekly-progress-label" id="weekly-count">0 / 5 完成</span></div>
+        <div class="weekly-track"><div class="weekly-fill" id="weekly-fill"></div></div>
+        <div class="weekly-tasks" id="weekly-tasks"></div>
+        <p class="weekly-note">依建議順序安排練習；完成後自行勾選。本清單每週一重新開始，不會扣分。</p>
+      </section>
 
       <article class="quiz-card">
         <div class="quiz-top"><div><span class="question-tag" id="question-tag">VOCABULARY · 初階</span><span class="question-count" id="question-count">TODAY'S QUESTION 01</span></div><span class="question-mark">?</span></div>

@@ -48,7 +48,14 @@ const writingPrompts = {
   intermediate: { label: '中階練習', text: 'Some students prefer studying alone, while others learn better in groups. Write a short paragraph explaining which you prefer and give two reasons.' },
   advanced: { label: '進階挑戰', text: 'Should cities invest more in public transportation even when the projects are expensive? State your position, support it with reasons or examples, and briefly address another point of view.' }
 };
-const defaultState = { level: 'beginner', xp: 0, correct: 0, answered: {}, attempts: {}, missed: {}, drafts: {}, writingChecks: {} };
+const weeklyTasks = [
+  ['vocab', '字彙與文法'],
+  ['cloze', '克漏字'],
+  ['reading', '閱讀理解'],
+  ['writing', '短寫作'],
+  ['review', '回顧與錯題複習']
+];
+const defaultState = { level: 'beginner', xp: 0, correct: 0, answered: {}, attempts: {}, missed: {}, drafts: {}, writingChecks: {}, weekly: {} };
 let state;
 try { state = { ...defaultState, ...JSON.parse(localStorage.getItem('examEnglishProgress') || '{}') }; } catch { state = { ...defaultState }; }
 state.answered ||= {};
@@ -56,10 +63,21 @@ state.attempts ||= {};
 state.missed ||= {};
 state.drafts ||= {};
 state.writingChecks ||= {};
+state.weekly ||= {};
+const weekKey = getWeekKey();
+if (state.weekly.weekKey !== weekKey) state.weekly = { weekKey, completed: {} };
+state.weekly.completed ||= {};
 let questionIndex = 0;
 let locked = false;
 let reviewQueue = null;
 const $ = (id) => document.getElementById(id);
+
+function getWeekKey() {
+  const date = new Date();
+  const weekday = (date.getDay() + 6) % 7;
+  date.setDate(date.getDate() - weekday);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
 
 function renderStats() {
   const level = Math.floor(state.xp / 100) + 1;
@@ -75,6 +93,9 @@ function renderStats() {
   const missedCount = Object.keys(state.missed).filter((key) => key.startsWith(`${state.level}:`)).length;
   $('review-count').textContent = missedCount;
   $('review-button').hidden = missedCount === 0 || reviewQueue !== null;
+  const weeklyDone = Object.values(state.weekly.completed).filter(Boolean).length;
+  $('weekly-count').textContent = `${weeklyDone} / ${weeklyTasks.length} 完成`;
+  $('weekly-fill').style.width = `${weeklyDone / weeklyTasks.length * 100}%`;
 }
 function save() {
   localStorage.setItem('examEnglishProgress', JSON.stringify(state));
@@ -109,6 +130,24 @@ function renderWriting() {
   document.querySelectorAll('[data-check]').forEach((input) => {
     input.checked = Boolean(state.writingChecks[`${state.level}:${input.dataset.check}`]);
   });
+}
+function renderWeekly() {
+  $('weekly-tasks').replaceChildren(...weeklyTasks.map(([id, title]) => {
+    const label = document.createElement('label');
+    label.className = 'weekly-task';
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.checked = Boolean(state.weekly.completed[id]);
+    input.addEventListener('change', () => {
+      state.weekly.completed[id] = input.checked;
+      save();
+    });
+    const text = document.createElement('span');
+    text.textContent = title;
+    label.append(input, text);
+    return label;
+  }));
+  renderStats();
 }
 function updateWordCount() {
   const words = $('writing-response').value.match(/[A-Za-z]+(?:['’][A-Za-z]+)*/g) || [];
@@ -168,7 +207,7 @@ $('review-button').addEventListener('click', () => {
 });
 $('reset-button').addEventListener('click', () => {
   if (!window.confirm('確定要清除這台裝置儲存的練習進度嗎？')) return;
-  state = { ...defaultState, answered: {}, attempts: {}, missed: {}, drafts: {}, writingChecks: {} }; questionIndex = 0; reviewQueue = null;
+  state = { ...defaultState, answered: {}, attempts: {}, missed: {}, drafts: {}, writingChecks: {}, weekly: { weekKey, completed: {} } }; questionIndex = 0; reviewQueue = null;
   document.querySelectorAll('.level-option').forEach((item) => item.classList.toggle('active', item.dataset.level === state.level));
   save(); renderQuestion(); renderWriting();
 });
@@ -176,3 +215,4 @@ renderStats();
 document.querySelectorAll('.level-option').forEach((item) => item.classList.toggle('active', item.dataset.level === state.level));
 renderQuestion();
 renderWriting();
+renderWeekly();
