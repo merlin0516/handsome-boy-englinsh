@@ -26,10 +26,10 @@
 - **理由：** 目前題目數不足以做可靠分級；自選可立即體驗並降低開始門檻。
 - **影響範圍：** 第一版上手流程與題目資料量需求。
 
-## D-004：Git 遠端目的地
+## D-004：GitHub 推送認證
 
-- **狀態：** 已提供目的地，待設定並推送
-- **問題：** 使用者要求完成階段後 `git push`，但目前 Git 專案未設定任何 remote。
-- **推薦：** 將使用者提供的 GitHub 倉庫設為 `origin`，在本階段提交完成後推送目前 `master` 分支。
-- **理由：** 遠端 URL 決定程式碼會傳送到哪個帳戶或組織，不能從現有資料安全推斷。
-- **影響範圍：** 使用者提供 `https://github.com/merlin0516/handsome-boy-englinsh.git` 作為明確目的地；推送內容為本機專案提交。
+- **狀態：** 遠端已設定，等待 GitHub 認證
+- **問題：** 使用者提供 GitHub 倉庫 URL 後，`origin` 已設定；`git push -u origin master` 等待 Git Credential Manager 認證，非互動推送回報找不到密碼。
+- **推薦：** 由倉庫擁有者在本機 Git Credential Manager 完成 GitHub 登入，再執行 `git push -u origin master`。不要把密碼或 token 貼在聊天或提交到專案。
+- **理由：** 推送需要具寫入權限的 GitHub 認證；目前工作環境沒有可用憑證。
+- **影響範圍：** `origin` 指向 `https://github.com/merlin0516/handsome-boy-englinsh.git`；本機提交保留，遠端分支尚未建立。
