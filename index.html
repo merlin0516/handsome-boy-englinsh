@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="writing.css">
   <link rel="stylesheet" href="weekly.css">
   <link rel="stylesheet" href="progress.css">
+  <link rel="stylesheet" href="accessibility.css">
 </head>
 <body>
   <main class="shell">
@@ -49,9 +50,9 @@
     <section class="practice-section" id="practice">
       <div class="section-heading"><div><p class="eyebrow">PICK YOUR CHALLENGE</p><h2>選擇你的練習程度</h2></div><p class="section-desc">可以依自己的狀況切換，<br>找到剛剛好的挑戰。</p></div>
       <div class="level-picker" role="group" aria-label="選擇練習程度">
-        <button class="level-option active" data-level="beginner"><span class="level-number">01</span><span class="level-title">初階</span><span class="level-description">基礎字彙・核心句型</span><span class="level-arrow">↗</span></button>
-        <button class="level-option" data-level="intermediate"><span class="level-number">02</span><span class="level-title">中階</span><span class="level-description">常見用法・段落理解</span><span class="level-arrow">↗</span></button>
-        <button class="level-option" data-level="advanced"><span class="level-number">03</span><span class="level-title">進階</span><span class="level-description">語境判讀・進階閱讀</span><span class="level-arrow">↗</span></button>
+        <button class="level-option active" data-level="beginner" aria-pressed="true"><span class="level-number">01</span><span class="level-title">初階</span><span class="level-description">基礎字彙・核心句型</span><span class="level-arrow">↗</span></button>
+        <button class="level-option" data-level="intermediate" aria-pressed="false"><span class="level-number">02</span><span class="level-title">中階</span><span class="level-description">常見用法・段落理解</span><span class="level-arrow">↗</span></button>
+        <button class="level-option" data-level="advanced" aria-pressed="false"><span class="level-number">03</span><span class="level-title">進階</span><span class="level-description">語境判讀・進階閱讀</span><span class="level-arrow">↗</span></button>
       </div>
 
       <section class="weekly-card" aria-labelledby="weekly-title">

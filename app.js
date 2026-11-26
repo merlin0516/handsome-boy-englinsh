@@ -334,7 +334,11 @@ document.querySelectorAll('.level-option').forEach((button) => button.addEventLi
   state.level = button.dataset.level;
   questionIndex = 0;
   reviewQueue = null;
-  document.querySelectorAll('.level-option').forEach((item) => item.classList.toggle('active', item === button));
+  document.querySelectorAll('.level-option').forEach((item) => {
+    const active = item === button;
+    item.classList.toggle('active', active);
+    item.setAttribute('aria-pressed', String(active));
+  });
   save(); renderQuestion(); renderWriting();
 }));
 $('writing-response').addEventListener('input', () => {
@@ -366,11 +370,19 @@ $('review-button').addEventListener('click', () => {
 $('reset-button').addEventListener('click', () => {
   if (!window.confirm('確定要清除這台裝置儲存的練習進度嗎？')) return;
   state = { ...defaultState, answered: {}, attempts: {}, activity: [], missed: {}, reviewSchedule: {}, drafts: {}, writingChecks: {}, writingFeedback: {}, weekly: { weekKey, completed: {} } }; questionIndex = 0; reviewQueue = null;
-  document.querySelectorAll('.level-option').forEach((item) => item.classList.toggle('active', item.dataset.level === state.level));
+  document.querySelectorAll('.level-option').forEach((item) => {
+    const active = item.dataset.level === state.level;
+    item.classList.toggle('active', active);
+    item.setAttribute('aria-pressed', String(active));
+  });
   save(); renderQuestion(); renderWriting();
 });
 renderStats();
-document.querySelectorAll('.level-option').forEach((item) => item.classList.toggle('active', item.dataset.level === state.level));
+document.querySelectorAll('.level-option').forEach((item) => {
+  const active = item.dataset.level === state.level;
+  item.classList.toggle('active', active);
+  item.setAttribute('aria-pressed', String(active));
+});
 renderQuestion();
 renderWriting();
 renderWeekly();
