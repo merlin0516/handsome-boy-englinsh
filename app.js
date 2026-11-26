@@ -11,7 +11,11 @@ const questionSets = {
     { tag: 'CLOZE', prompt: 'Emma made a card for her mother. She drew a flower on the front. _____, she wrote a kind message inside.', choices: ['Finally', 'Suddenly', 'Instead', 'Although'], answer: 0, explain: '寫訊息是製作卡片的最後一步；Finally 表示「最後」。' },
     { tag: 'GRAMMAR', prompt: 'If it _____ tomorrow, we will play soccer outside.', choices: ['does not rain', 'did not rain', 'will not rain', 'not raining'], answer: 0, explain: '第一類條件句的 if 子句用現在簡單式表達未來可能；主句用 will。' },
     { tag: 'VOCABULARY', prompt: 'The museum guide spoke slowly so visitors could _____ the story.', choices: ['understand', 'forget', 'borrow', 'invite'], answer: 0, explain: '導覽員放慢速度是為了讓參觀者理解故事；understand 是「理解」。' },
-    { tag: 'READING', prompt: 'A sign at the pool says, “Please shower before entering the water. Children under 12 must stay with an adult.” What must a 10-year-old visitor do?', choices: ['Bring an adult to the pool.', 'Swim before taking a shower.', 'Leave the pool alone.', 'Pay for an extra lesson.'], answer: 0, explain: '標示明確要求 12 歲以下兒童要和成人待在一起。' }
+    { tag: 'READING', prompt: 'A sign at the pool says, “Please shower before entering the water. Children under 12 must stay with an adult.” What must a 10-year-old visitor do?', choices: ['Bring an adult to the pool.', 'Swim before taking a shower.', 'Leave the pool alone.', 'Pay for an extra lesson.'], answer: 0, explain: '標示明確要求 12 歲以下兒童要和成人待在一起。' },
+    { tag: 'CLOZE', prompt: 'Maya forgot her umbrella, _____ her friend shared one with her on the way home.', choices: ['unless', 'so', 'although', 'instead'], answer: 1, explain: '朋友分享雨傘是 Maya 忘記帶傘後的結果，因此用 so 表示「所以」。' },
+    { tag: 'READING', prompt: 'The class garden is open at lunch. Students may water the plants, but they must return the tools to the box before class. What should a student do after watering?', choices: ['Take the tools home.', 'Close the garden for the day.', 'Put the tools back in the box.', 'Wait until after school to water.'], answer: 2, explain: '規定明確說明午餐時間可澆水，之後要在上課前把工具放回箱子。' },
+    { tag: 'VOCABULARY', prompt: 'The glass is full, so carry it _____ to avoid spilling the water.', choices: ['carelessly', 'rarely', 'loudly', 'carefully'], answer: 3, explain: '為了避免水灑出來，應該小心地拿；carefully 是「小心地」。' },
+    { tag: 'GRAMMAR', prompt: 'My brother and I _____ the same bus every morning.', choices: ['take', 'takes', 'taking', 'took'], answer: 0, explain: '主詞 My brother and I 是複數，描述每天的習慣用現在簡單式 take。' }
   ],
   intermediate: [
     { tag: 'VOCABULARY', prompt: 'The new policy aims to _____ traffic in the city center.', choices: ['reduce', 'replace', 'repeat', 'remind'], answer: 0, explain: 'reduce traffic 表示「減少交通（車流）」。' },
@@ -25,7 +29,11 @@ const questionSets = {
     { tag: 'CLOZE', prompt: 'A neighborhood bookstore began hosting free reading groups. _____, more residents started visiting the shop, and several asked for a second monthly session.', choices: ['As a result', 'On the contrary', 'For instance', 'At first'], answer: 0, explain: '讀書會開始後，來店居民變多並要求加開場次，語意呈現結果，因此用 As a result。' },
     { tag: 'GRAMMAR', prompt: 'The students, _____ their projects early, had time to check their work.', choices: ['finish', 'finished', 'having finished', 'were finishing'], answer: 2, explain: '學生先完成專題，之後才有時間檢查；having finished 表示先完成的動作。' },
     { tag: 'VOCABULARY', prompt: 'The instructions were brief but _____; no important step was missing.', choices: ['comprehensive', 'temporary', 'distant', 'ordinary'], answer: 0, explain: '沒有漏掉重要步驟，表示說明雖簡短但完整；comprehensive 是「全面的」。' },
-    { tag: 'READING', prompt: 'A town added bike lanes on two busy roads. In a survey, 60 percent of respondents said they felt safer cycling there, but the town did not count bicycle trips before the change. Which claim is best supported?', choices: ['Most surveyed respondents said they felt safer.', 'Cycling increased by exactly 60 percent.', 'Car crashes fell on both roads.', 'Every resident supports the lanes.'], answer: 0, explain: '調查支持多數受訪者表示感覺較安全；沒有前後車流數據，不能推論騎乘量或事故變化。' }
+    { tag: 'READING', prompt: 'A town added bike lanes on two busy roads. In a survey, 60 percent of respondents said they felt safer cycling there, but the town did not count bicycle trips before the change. Which claim is best supported?', choices: ['Most surveyed respondents said they felt safer.', 'Cycling increased by exactly 60 percent.', 'Car crashes fell on both roads.', 'Every resident supports the lanes.'], answer: 0, explain: '調查支持多數受訪者表示感覺較安全；沒有前後車流數據，不能推論騎乘量或事故變化。' },
+    { tag: 'VOCABULARY', prompt: 'The manager asked staff to _____ the cause of repeated delays before proposing a solution.', choices: ['celebrate', 'scatter', 'identify', 'decorate'], answer: 2, explain: '提出解決辦法前，應先找出延誤原因；identify 是「辨認、找出」。' },
+    { tag: 'GRAMMAR', prompt: 'Although the new route is longer, it is _____ than the old road during rush hour.', choices: ['least crowded', 'less crowded', 'crowded', 'more crowded'], answer: 1, explain: 'than 表示比較級；less crowded 表示「比較不擁擠」。' },
+    { tag: 'CLOZE', prompt: 'The survey included only a small sample; _____, its results should be treated as an early signal rather than a final answer.', choices: ['meanwhile', 'similarly', 'otherwise', 'therefore'], answer: 3, explain: '樣本數少是把結果視為初步訊號的理由，因此用 therefore 表示結果。' },
+    { tag: 'READING', prompt: 'Riverside Library stayed open until 8 p.m. on Tuesdays for two months. Visits after 6 p.m. increased each week. The library did not collect data on total weekly visits or staffing costs. Which conclusion is supported?', choices: ['Evening visits increased during the trial.', 'Total weekly visits doubled.', 'The trial reduced staffing costs.', 'All visitors preferred the later hours.'], answer: 0, explain: '資料只指出試辦期間晚間到訪增加；沒有總到訪量、成本或偏好調查，不能推出其他結論。' }
   ],
   advanced: [
     { tag: 'VOCABULARY', prompt: 'The scientist urged caution, noting that the findings were still _____ and needed replication.', choices: ['preliminary', 'inevitable', 'conventional', 'substantial'], answer: 0, explain: 'preliminary 表示「初步的」，符合仍需重複驗證的語境。' },
@@ -39,7 +47,11 @@ const questionSets = {
     { tag: 'CLOZE', prompt: 'The research team published its dataset and analysis steps so others could check the results. _____, independent groups were able to reproduce the main finding.', choices: ['Consequently', 'Nevertheless', 'Meanwhile', 'Otherwise'], answer: 0, explain: '公開資料和分析步驟讓其他團隊得以重現結果，前後為因果關係，用 Consequently。' },
     { tag: 'GRAMMAR', prompt: 'Rarely _____ such a detailed account of how the decision was made.', choices: ['we see', 'do we see', 'we have seen', 'did we saw'], answer: 1, explain: '否定副詞 Rarely 置於句首時，主要子句需倒裝；此處用 do we see。' },
     { tag: 'VOCABULARY', prompt: 'The policy was revised to address an _____ gap between the written rules and how they were applied.', choices: ['apparent', 'reluctant', 'portable', 'casual'], answer: 0, explain: '可從規則與實際執行的落差看出問題；apparent 表示「明顯的」。' },
-    { tag: 'READING', prompt: 'A report found that a tutoring program improved average scores at three participating schools. The schools volunteered for the program, and no comparison group was included. Which conclusion is most cautious?', choices: ['Scores rose at participating schools, but the program’s effect cannot be isolated.', 'The program caused the same gain in every school.', 'Students would have scored lower without tutors.', 'The program is effective for all students.'], answer: 0, explain: '參與學校自願加入且沒有比較組，觀察到分數提高，但不能單獨歸因於計畫。' }
+    { tag: 'READING', prompt: 'A report found that a tutoring program improved average scores at three participating schools. The schools volunteered for the program, and no comparison group was included. Which conclusion is most cautious?', choices: ['Scores rose at participating schools, but the program’s effect cannot be isolated.', 'The program caused the same gain in every school.', 'Students would have scored lower without tutors.', 'The program is effective for all students.'], answer: 0, explain: '參與學校自願加入且沒有比較組，觀察到分數提高，但不能單獨歸因於計畫。' },
+    { tag: 'VOCABULARY', prompt: 'Although the prototype is faster, its performance remains _____ because it has been tested on only a few devices.', choices: ['robust', 'unanimous', 'reluctant', 'uncertain'], answer: 3, explain: '測試裝置數量有限，因此效能表現仍不確定；uncertain 是「不確定的」。' },
+    { tag: 'GRAMMAR', prompt: 'Only after the second trial _____ the team notice that one sensor had been miscalibrated.', choices: ['the team did', 'has the team', 'did', 'the team had'], answer: 2, explain: 'Only after 置於句首時，主句需部分倒裝；過去式助動詞 did 放在主詞 the team 前。' },
+    { tag: 'CLOZE', prompt: 'The committee will publish the revised guidelines _____ legal review is completed.', choices: ['whereas', 'once', 'nevertheless', 'unless'], answer: 1, explain: '法律審查完成後就會公布修訂指引；once 表示「一旦、……之後」。' },
+    { tag: 'READING', prompt: 'A remote-work pilot let one department work from home two days a week. Survey responses showed higher satisfaction, but productivity data were incomplete, and employees volunteered to join. Which conclusion is most cautious?', choices: ['Participating employees reported higher satisfaction, while the productivity effect is unclear.', 'Remote work increased productivity for every department.', 'Employees who did not volunteer were less satisfied.', 'The pilot proves that all offices should close.'], answer: 0, explain: '問卷顯示參與者滿意度較高，但自願參與且生產力資料不完整，不能判定生產力效果或推及所有部門。' }
   ]
 };
 const levelNames = { beginner: '初階', intermediate: '中階', advanced: '進階' };
@@ -55,7 +67,7 @@ const weeklyTasks = [
   ['writing', '短寫作'],
   ['review', '回顧與錯題複習']
 ];
-const defaultState = { level: 'beginner', xp: 0, correct: 0, answered: {}, attempts: {}, missed: {}, drafts: {}, writingChecks: {}, weekly: {} };
+const defaultState = { level: 'beginner', xp: 0, correct: 0, answered: {}, attempts: {}, missed: {}, drafts: {}, writingChecks: {}, writingFeedback: {}, weekly: {} };
 let state;
 try { state = { ...defaultState, ...JSON.parse(localStorage.getItem('examEnglishProgress') || '{}') }; } catch { state = { ...defaultState }; }
 state.answered ||= {};
@@ -63,6 +75,7 @@ state.attempts ||= {};
 state.missed ||= {};
 state.drafts ||= {};
 state.writingChecks ||= {};
+state.writingFeedback ||= {};
 state.weekly ||= {};
 const weekKey = getWeekKey();
 if (state.weekly.weekKey !== weekKey) state.weekly = { weekKey, completed: {} };
@@ -130,6 +143,10 @@ function renderWriting() {
   document.querySelectorAll('[data-check]').forEach((input) => {
     input.checked = Boolean(state.writingChecks[`${state.level}:${input.dataset.check}`]);
   });
+  const feedback = state.writingFeedback[state.level] || {};
+  document.querySelectorAll('[data-feedback]').forEach((input) => {
+    input.value = feedback[input.dataset.feedback] || '';
+  });
 }
 function renderWeekly() {
   $('weekly-tasks').replaceChildren(...weeklyTasks.map(([id, title]) => {
@@ -195,6 +212,11 @@ document.querySelectorAll('[data-check]').forEach((input) => input.addEventListe
   else delete state.writingChecks[key];
   save();
 }));
+document.querySelectorAll('[data-feedback]').forEach((input) => input.addEventListener('input', () => {
+  state.writingFeedback[state.level] ||= {};
+  state.writingFeedback[state.level][input.dataset.feedback] = input.value;
+  save();
+}));
 $('next-button').addEventListener('click', () => {
   questionIndex += 1;
   if (reviewQueue && questionIndex >= reviewQueue.length) { reviewQueue = null; questionIndex = 0; }
@@ -207,7 +229,7 @@ $('review-button').addEventListener('click', () => {
 });
 $('reset-button').addEventListener('click', () => {
   if (!window.confirm('確定要清除這台裝置儲存的練習進度嗎？')) return;
-  state = { ...defaultState, answered: {}, attempts: {}, missed: {}, drafts: {}, writingChecks: {}, weekly: { weekKey, completed: {} } }; questionIndex = 0; reviewQueue = null;
+  state = { ...defaultState, answered: {}, attempts: {}, missed: {}, drafts: {}, writingChecks: {}, writingFeedback: {}, weekly: { weekKey, completed: {} } }; questionIndex = 0; reviewQueue = null;
   document.querySelectorAll('.level-option').forEach((item) => item.classList.toggle('active', item.dataset.level === state.level));
   save(); renderQuestion(); renderWriting();
 });

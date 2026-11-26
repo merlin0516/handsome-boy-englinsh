@@ -64,7 +64,14 @@
         <textarea id="writing-response" rows="6" placeholder="Write your ideas in English..."></textarea>
         <div class="writing-meta"><span id="word-count">0 words</span><span>草稿會保存在這台裝置</span></div>
         <div class="self-check"><strong>完成後自我檢查</strong><label><input type="checkbox" data-check="purpose"> 我有回答題目要求</label><label><input type="checkbox" data-check="sentences"> 我檢查了句子與動詞</label><label><input type="checkbox" data-check="coherence"> 我的想法有清楚連接</label></div>
-        <p class="writing-note">自我檢查是練習提示，不是正式評分；如需教師回饋，可將草稿帶去討論。</p>
+        <section class="peer-feedback" aria-labelledby="peer-feedback-title">
+          <div class="peer-feedback-heading"><h3 id="peer-feedback-title">教師／同儕回饋</h3><span>與他人討論後記錄</span></div>
+          <label>一個寫得清楚或有力的地方<textarea data-feedback="strength" rows="2" placeholder="Your partner can point to a clear idea or useful example."></textarea></label>
+          <label>一個想再確認的問題<textarea data-feedback="question" rows="2" placeholder="What would you like the writer to explain further?"></textarea></label>
+          <label>下一稿可以嘗試的一項修改<textarea data-feedback="revision" rows="2" placeholder="Suggest one specific change the writer can try."></textarea></label>
+          <p class="writing-note">回饋只保存在這台裝置，依程度分開保存；這是討論紀錄，不是正式評分。</p>
+        </section>
+        <p class="writing-note">自我檢查是練習提示，不是正式評分。可先完成草稿與檢查，再請老師或同學依上方三個問題提供具體回饋。</p>
       </section>
     </section>
 
