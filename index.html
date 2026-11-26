@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="review.css">
   <link rel="stylesheet" href="writing.css">
   <link rel="stylesheet" href="weekly.css">
+  <link rel="stylesheet" href="progress.css">
 </head>
 <body>
   <main class="shell">
@@ -31,6 +32,18 @@
       <div class="stat-card level-card"><div class="stat-icon">↗</div><div><span class="stat-label">目前等級</span><strong id="level-name">初階・Lv. 1</strong><span class="stat-sub" id="level-hint">從基礎開始累積</span></div></div>
       <div class="stat-card xp-card"><div class="stat-top"><span class="stat-label">升級經驗值</span><strong><span id="xp-current">0</span><small> / <span id="xp-next">100</span> XP</small></strong></div><div class="progress-track"><div class="progress-fill" id="xp-fill"></div></div><span class="stat-sub">答對一題獲得 20 XP</span></div>
       <div class="stat-card streak-card"><div class="stat-icon streak-icon">✳</div><div><span class="stat-label">累積答對</span><strong><span id="correct-count">0</span> 題</strong><span class="stat-sub">已練習 <span id="attempt-count">0</span> 題</span></div></div>
+    </section>
+
+    <section class="activity-card" aria-labelledby="activity-title">
+      <div class="activity-heading"><div><p class="eyebrow">YOUR RECENT PRACTICE</p><h2 id="activity-title">近期練習</h2></div><span class="activity-period">依此裝置日期統計</span></div>
+      <div class="activity-highlights">
+        <div class="activity-stat"><span>今天作答</span><strong id="daily-attempts">0 題</strong></div>
+        <div class="activity-stat"><span>近 7 天作答</span><strong id="weekly-attempts">0 題</strong></div>
+        <div class="activity-stat"><span>近 7 天答對率</span><strong id="weekly-accuracy">—</strong></div>
+      </div>
+      <h3 class="skill-heading">近 7 天各題型</h3>
+      <div class="skill-metrics" id="skill-metrics" role="list"></div>
+      <p class="activity-note" id="activity-note">統計合併所有程度，正確率以作答次數計算；從此版本起記錄並僅保留本機近 90 天，舊作答無法還原。</p>
     </section>
 
     <section class="practice-section" id="practice">

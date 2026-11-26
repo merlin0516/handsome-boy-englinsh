@@ -67,16 +67,22 @@ const weeklyTasks = [
   ['writing', '短寫作'],
   ['review', '回顧與錯題複習']
 ];
-const defaultState = { level: 'beginner', xp: 0, correct: 0, answered: {}, attempts: {}, missed: {}, drafts: {}, writingChecks: {}, writingFeedback: {}, weekly: {} };
+const defaultState = { level: 'beginner', xp: 0, correct: 0, answered: {}, attempts: {}, activity: [], missed: {}, drafts: {}, writingChecks: {}, writingFeedback: {}, weekly: {} };
 let state;
 try { state = { ...defaultState, ...JSON.parse(localStorage.getItem('examEnglishProgress') || '{}') }; } catch { state = { ...defaultState }; }
 state.answered ||= {};
 state.attempts ||= {};
+state.activity = Array.isArray(state.activity) ? state.activity : [];
 state.missed ||= {};
 state.drafts ||= {};
 state.writingChecks ||= {};
 state.writingFeedback ||= {};
 state.weekly ||= {};
+const oldestActivityDate = new Date();
+oldestActivityDate.setHours(0, 0, 0, 0);
+oldestActivityDate.setDate(oldestActivityDate.getDate() - 89);
+const earliestActivityKey = getDateKey(oldestActivityDate);
+state.activity = state.activity.filter((entry) => entry && /^\d{4}-\d{2}-\d{2}$/.test(entry.date) && entry.date >= earliestActivityKey && entry.date <= getDateKey() && Object.hasOwn(levelNames, entry.level) && ['VOCABULARY', 'GRAMMAR', 'CLOZE', 'READING'].includes(entry.tag) && Number.isInteger(entry.attempts) && entry.attempts > 0 && Number.isInteger(entry.correct) && entry.correct >= 0 && entry.correct <= entry.attempts);
 const weekKey = getWeekKey();
 if (state.weekly.weekKey !== weekKey) state.weekly = { weekKey, completed: {} };
 state.weekly.completed ||= {};
@@ -89,6 +95,10 @@ function getWeekKey() {
   const date = new Date();
   const weekday = (date.getDay() + 6) % 7;
   date.setDate(date.getDate() - weekday);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+function getDateKey(date = new Date()) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
@@ -109,6 +119,45 @@ function renderStats() {
   const weeklyDone = Object.values(state.weekly.completed).filter(Boolean).length;
   $('weekly-count').textContent = `${weeklyDone} / ${weeklyTasks.length} 完成`;
   $('weekly-fill').style.width = `${weeklyDone / weeklyTasks.length * 100}%`;
+  renderLearningSummary();
+}
+function renderLearningSummary() {
+  const todayKey = getDateKey();
+  const firstDay = new Date();
+  firstDay.setHours(0, 0, 0, 0);
+  firstDay.setDate(firstDay.getDate() - 6);
+  const firstDayKey = getDateKey(firstDay);
+  const todayRows = state.activity.filter((entry) => entry.date === todayKey);
+  const weekRows = state.activity.filter((entry) => entry.date >= firstDayKey && entry.date <= todayKey);
+  const attempts = weekRows.reduce((sum, entry) => sum + entry.attempts, 0);
+  const correct = weekRows.reduce((sum, entry) => sum + entry.correct, 0);
+  $('daily-attempts').textContent = `${todayRows.reduce((sum, entry) => sum + entry.attempts, 0)} 題`;
+  $('weekly-attempts').textContent = `${attempts} 題`;
+  $('weekly-accuracy').textContent = attempts ? `${Math.round(correct / attempts * 100)}%` : '—';
+
+  const skillNames = { VOCABULARY: '字彙', GRAMMAR: '文法', CLOZE: '克漏字', READING: '閱讀理解' };
+  $('skill-metrics').replaceChildren(...Object.entries(skillNames).map(([tag, title]) => {
+    const rows = weekRows.filter((entry) => entry.tag === tag);
+    const skillAttempts = rows.reduce((sum, entry) => sum + entry.attempts, 0);
+    const skillCorrect = rows.reduce((sum, entry) => sum + entry.correct, 0);
+    const item = document.createElement('div');
+    item.className = 'skill-metric';
+    item.setAttribute('role', 'listitem');
+    const label = document.createElement('span');
+    label.className = 'skill-name';
+    label.textContent = title;
+    const result = document.createElement('span');
+    result.className = 'skill-result';
+    result.textContent = skillAttempts ? `${skillCorrect} / ${skillAttempts} 題・${Math.round(skillCorrect / skillAttempts * 100)}%` : '尚無作答';
+    const track = document.createElement('div');
+    track.className = 'skill-track';
+    track.setAttribute('aria-hidden', 'true');
+    const fill = document.createElement('span');
+    fill.style.width = skillAttempts ? `${skillCorrect / skillAttempts * 100}%` : '0%';
+    track.append(fill);
+    item.append(label, result, track);
+    return item;
+  }));
 }
 function save() {
   localStorage.setItem('examEnglishProgress', JSON.stringify(state));
@@ -179,6 +228,7 @@ function answer(selected, q, button) {
   feedback.hidden = false;
   const key = `${state.level}:${reviewQueue ? reviewQueue[questionIndex] : questionIndex % questionSets[state.level].length}`;
   state.attempts[key] = (state.attempts[key] || 0) + 1;
+  recordActivity(state.level, q.tag, selected === q.answer);
   if (selected === q.answer) {
     const earnedXp = !state.answered[key];
     if (earnedXp) { state.xp += 20; state.correct += 1; state.answered[key] = true; }
@@ -193,6 +243,16 @@ function answer(selected, q, button) {
     save();
   }
   $('next-button').hidden = false;
+}
+function recordActivity(level, tag, wasCorrect) {
+  const date = getDateKey();
+  let entry = state.activity.find((item) => item.date === date && item.level === level && item.tag === tag);
+  if (!entry) {
+    entry = { date, level, tag, attempts: 0, correct: 0 };
+    state.activity.push(entry);
+  }
+  entry.attempts += 1;
+  if (wasCorrect) entry.correct += 1;
 }
 document.querySelectorAll('.level-option').forEach((button) => button.addEventListener('click', () => {
   state.level = button.dataset.level;
