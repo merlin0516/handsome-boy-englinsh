@@ -28,8 +28,8 @@
 
 ## D-004：GitHub 推送認證
 
-- **狀態：** 遠端已設定，等待 GitHub 認證
-- **問題：** 使用者提供 GitHub 倉庫 URL 後，`origin` 已設定；`git push -u origin master` 等待 Git Credential Manager 認證，非互動推送回報找不到密碼。
-- **推薦：** 由倉庫擁有者在本機 Git Credential Manager 完成 GitHub 登入，再執行 `git push -u origin master`。不要把密碼或 token 貼在聊天或提交到專案。
-- **理由：** 推送需要具寫入權限的 GitHub 認證；目前工作環境沒有可用憑證。
-- **影響範圍：** `origin` 指向 `https://github.com/merlin0516/handsome-boy-englinsh.git`；本機提交保留，遠端分支尚未建立。
+- **狀態：** 待本階段推送結果確認
+- **問題：** 先前一次非互動推送因找不到憑證失敗；目前工作副本已追蹤遠端 `master`，表示遠端分支存在，但不代表目前環境一定有寫入權限。
+- **推薦：** 每次完成階段後直接嘗試一般 `git push`；若認證失敗，保留本機提交，請倉庫擁有者在 Git Credential Manager 登入後重試。不要把密碼或 token 貼在聊天或提交到專案。
+- **理由：** 讀取公開倉庫與推送寫入使用的權限不同；以實際推送結果判定狀態。
+- **影響範圍：** `origin` 指向 `https://github.com/merlin0516/handsome-boy-englinsh.git`；遠端 `master` 現存，待確認新提交是否能推送。
