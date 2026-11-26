@@ -33,3 +33,11 @@
 - **範圍：** `app.js` 各程度新增 4 題（共 12 題；題庫由每程度 12 題增加為 16 題）。
 - **檢查：** 逐題對照選項索引、正解、解說、語境線索與程度；閱讀題只要求題幹資料能支持的結論，並確認每題有四個選項。每個程度的四題正解位置各落在 A、B、C、D 一次，避免答案集中在同一位置。
 - **結果：** 新題涵蓋字彙、文法、克漏字及閱讀理解；完成程式語法與題庫結構檢查。此為作者自我檢視，不是獨立審查或實際難度校準。
+
+## 外部審查包
+
+- 審查指南：[reviewer-guide.md](reviewer-guide.md)
+- 先獨立作答的工作表：[reviewer-questions.csv](reviewer-questions.csv)
+- 分開保存的目前答案與解說：[reviewer-answer-key.csv](reviewer-answer-key.csv)
+- 重新產生兩份 CSV：在專案根目錄執行 `node tools/export-review-packet.js`。
+- **狀態：** 48 題審查檔已備妥；尚無第二位審查者完成覆核。
