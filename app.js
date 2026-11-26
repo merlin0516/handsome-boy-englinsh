@@ -67,13 +67,14 @@ const weeklyTasks = [
   ['writing', '短寫作'],
   ['review', '回顧與錯題複習']
 ];
-const defaultState = { level: 'beginner', xp: 0, correct: 0, answered: {}, attempts: {}, activity: [], missed: {}, drafts: {}, writingChecks: {}, writingFeedback: {}, weekly: {} };
+const defaultState = { level: 'beginner', xp: 0, correct: 0, answered: {}, attempts: {}, activity: [], missed: {}, reviewSchedule: {}, drafts: {}, writingChecks: {}, writingFeedback: {}, weekly: {} };
 let state;
 try { state = { ...defaultState, ...JSON.parse(localStorage.getItem('examEnglishProgress') || '{}') }; } catch { state = { ...defaultState }; }
 state.answered ||= {};
 state.attempts ||= {};
 state.activity = Array.isArray(state.activity) ? state.activity : [];
-state.missed ||= {};
+state.missed = state.missed && typeof state.missed === 'object' && !Array.isArray(state.missed) ? state.missed : {};
+state.reviewSchedule = state.reviewSchedule && typeof state.reviewSchedule === 'object' && !Array.isArray(state.reviewSchedule) ? state.reviewSchedule : {};
 state.drafts ||= {};
 state.writingChecks ||= {};
 state.writingFeedback ||= {};
@@ -83,6 +84,20 @@ oldestActivityDate.setHours(0, 0, 0, 0);
 oldestActivityDate.setDate(oldestActivityDate.getDate() - 89);
 const earliestActivityKey = getDateKey(oldestActivityDate);
 state.activity = state.activity.filter((entry) => entry && /^\d{4}-\d{2}-\d{2}$/.test(entry.date) && entry.date >= earliestActivityKey && entry.date <= getDateKey() && Object.hasOwn(levelNames, entry.level) && ['VOCABULARY', 'GRAMMAR', 'CLOZE', 'READING'].includes(entry.tag) && Number.isInteger(entry.attempts) && entry.attempts > 0 && Number.isInteger(entry.correct) && entry.correct >= 0 && entry.correct <= entry.attempts);
+for (const key of Object.keys(state.missed)) {
+  const [level, index] = key.split(':');
+  if (!questionSets[level] || !/^\d+$/.test(index) || Number(index) >= questionSets[level].length) delete state.missed[key];
+}
+for (const [key, schedule] of Object.entries(state.reviewSchedule)) {
+  const [level, index] = key.split(':');
+  const validQuestion = questionSets[level] && /^\d+$/.test(index) && Number(index) < questionSets[level].length;
+  const validDate = schedule && /^\d{4}-\d{2}-\d{2}$/.test(schedule.dueOn);
+  const validStage = Number.isInteger(schedule?.stage) && schedule.stage >= 0 && schedule.stage <= 3;
+  if (!validQuestion || !validDate || !validStage) delete state.reviewSchedule[key];
+}
+for (const key of Object.keys(state.missed)) {
+  state.reviewSchedule[key] ||= { stage: 0, dueOn: getDateKey() };
+}
 const weekKey = getWeekKey();
 if (state.weekly.weekKey !== weekKey) state.weekly = { weekKey, completed: {} };
 state.weekly.completed ||= {};
@@ -90,6 +105,7 @@ let questionIndex = 0;
 let locked = false;
 let reviewQueue = null;
 const $ = (id) => document.getElementById(id);
+const reviewIntervals = [1, 3, 7, 14];
 
 function getWeekKey() {
   const date = new Date();
@@ -100,6 +116,49 @@ function getWeekKey() {
 
 function getDateKey(date = new Date()) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+function addCalendarDays(dateKey, days) {
+  const date = new Date(`${dateKey}T00:00:00`);
+  date.setDate(date.getDate() + days);
+  return getDateKey(date);
+}
+
+function getReviewQueueKeys(level = state.level) {
+  const prefix = `${level}:`;
+  const today = getDateKey();
+  const missedKeys = Object.keys(state.missed).filter((key) => key.startsWith(prefix));
+  const dueKeys = Object.entries(state.reviewSchedule)
+    .filter(([key, schedule]) => key.startsWith(prefix) && schedule.dueOn <= today)
+    .map(([key]) => key);
+  return [...new Set([...missedKeys, ...dueKeys])];
+}
+
+function advanceReviewSchedule(key) {
+  const schedule = state.reviewSchedule[key];
+  if (!schedule) return;
+  const nextStage = schedule.stage + 1;
+  if (nextStage >= reviewIntervals.length) delete state.reviewSchedule[key];
+  else state.reviewSchedule[key] = { stage: nextStage, dueOn: addCalendarDays(getDateKey(), reviewIntervals[nextStage]) };
+}
+
+function renderReviewScheduleNote() {
+  const levelPrefix = `${state.level}:`;
+  const futureDates = Object.entries(state.reviewSchedule)
+    .filter(([key, schedule]) => key.startsWith(levelPrefix) && !state.missed[key] && schedule.dueOn > getDateKey())
+    .map(([, schedule]) => schedule.dueOn)
+    .sort();
+  const queueCount = getReviewQueueKeys().length;
+  const intervalsText = reviewIntervals.join('、');
+  if (queueCount) {
+    $('review-schedule-note').textContent = futureDates.length
+      ? `${queueCount} 題可複習；另有題目預計 ${futureDates[0]} 到期。答對後間隔為 ${intervalsText} 天。`
+      : `${queueCount} 題可複習；答對後依 ${intervalsText} 天間隔安排下一次。`;
+  } else if (futureDates.length) {
+    $('review-schedule-note').textContent = `下一次複習預計 ${futureDates[0]}；間隔為 ${intervalsText} 天。`;
+  } else {
+    $('review-schedule-note').textContent = `答錯題隔天加入複習；答對後依 ${intervalsText} 天間隔安排。此試行規則尚未校準。`;
+  }
 }
 
 function renderStats() {
@@ -114,8 +173,11 @@ function renderStats() {
   $('attempt-count').textContent = Object.values(state.attempts).reduce((sum, count) => sum + count, 0);
   $('level-count').textContent = String(Math.min(99, level)).padStart(2, '0');
   const missedCount = Object.keys(state.missed).filter((key) => key.startsWith(`${state.level}:`)).length;
-  $('review-count').textContent = missedCount;
-  $('review-button').hidden = missedCount === 0 || reviewQueue !== null;
+  const reviewCount = getReviewQueueKeys().length;
+  $('review-count').textContent = reviewCount;
+  $('review-label').textContent = missedCount ? '複習錯題' : '複習到期題';
+  $('review-button').hidden = reviewCount === 0 || reviewQueue !== null;
+  renderReviewScheduleNote();
   const weeklyDone = Object.values(state.weekly.completed).filter(Boolean).length;
   $('weekly-count').textContent = `${weeklyDone} / ${weeklyTasks.length} 完成`;
   $('weekly-fill').style.width = `${weeklyDone / weeklyTasks.length * 100}%`;
@@ -169,7 +231,7 @@ function renderQuestion() {
   const q = set[currentIndex];
   locked = false;
   $('question-tag').textContent = `${q.tag} · ${levelNames[state.level]}`;
-  $('question-count').textContent = reviewQueue ? `錯題複習 ${questionIndex + 1} / ${reviewQueue.length}` : `PRACTICE QUESTION ${String(questionIndex + 1).padStart(2, '0')}`;
+  $('question-count').textContent = reviewQueue ? `間隔複習 ${questionIndex + 1} / ${reviewQueue.length}` : `PRACTICE QUESTION ${String(questionIndex + 1).padStart(2, '0')}`;
   $('question-text').textContent = q.prompt;
   $('feedback').hidden = true;
   $('feedback').className = 'feedback';
@@ -233,11 +295,13 @@ function answer(selected, q, button) {
     const earnedXp = !state.answered[key];
     if (earnedXp) { state.xp += 20; state.correct += 1; state.answered[key] = true; }
     delete state.missed[key];
+    if (reviewQueue !== null || (state.reviewSchedule[key] && state.reviewSchedule[key].dueOn <= getDateKey())) advanceReviewSchedule(key);
     feedback.textContent = `答對了！${q.explain}${earnedXp && state.xp % 100 === 0 ? ' 升級經驗值已滿！' : ''}`;
     save();
   } else {
     button.classList.add('incorrect');
     state.missed[key] = true;
+    state.reviewSchedule[key] = { stage: 0, dueOn: addCalendarDays(getDateKey(), reviewIntervals[0]) };
     feedback.classList.add('wrong');
     feedback.textContent = `再看一次：${q.explain}`;
     save();
@@ -283,13 +347,13 @@ $('next-button').addEventListener('click', () => {
   renderQuestion();
 });
 $('review-button').addEventListener('click', () => {
-  reviewQueue = Object.keys(state.missed).filter((key) => key.startsWith(`${state.level}:`)).map((key) => Number(key.split(':')[1]));
+  reviewQueue = getReviewQueueKeys().map((key) => Number(key.split(':')[1]));
   questionIndex = 0;
   if (reviewQueue.length) renderQuestion();
 });
 $('reset-button').addEventListener('click', () => {
   if (!window.confirm('確定要清除這台裝置儲存的練習進度嗎？')) return;
-  state = { ...defaultState, answered: {}, attempts: {}, missed: {}, drafts: {}, writingChecks: {}, writingFeedback: {}, weekly: { weekKey, completed: {} } }; questionIndex = 0; reviewQueue = null;
+  state = { ...defaultState, answered: {}, attempts: {}, activity: [], missed: {}, reviewSchedule: {}, drafts: {}, writingChecks: {}, writingFeedback: {}, weekly: { weekKey, completed: {} } }; questionIndex = 0; reviewQueue = null;
   document.querySelectorAll('.level-option').forEach((item) => item.classList.toggle('active', item.dataset.level === state.level));
   save(); renderQuestion(); renderWriting();
 });
