@@ -28,11 +28,11 @@
 
 ## D-004：GitHub 推送認證
 
-- **狀態：** 待本階段推送結果確認
+- **狀態：** 2026-11-26 已確認推送成功
 - **問題：** 先前一次非互動推送因找不到憑證失敗；目前工作副本已追蹤遠端 `master`，表示遠端分支存在，但不代表目前環境一定有寫入權限。
 - **推薦：** 每次完成階段後直接嘗試一般 `git push`；若認證失敗，保留本機提交，請倉庫擁有者在 Git Credential Manager 登入後重試。不要把密碼或 token 貼在聊天或提交到專案。
 - **理由：** 讀取公開倉庫與推送寫入使用的權限不同；以實際推送結果判定狀態。
-- **影響範圍：** `origin` 指向 `https://github.com/merlin0516/handsome-boy-englinsh.git`；遠端 `master` 現存，待確認新提交是否能推送。
+- **影響範圍：** `origin` 指向 `https://github.com/merlin0516/handsome-boy-englinsh.git`；使用 `git -c credential.interactive=never push origin master` 成功推送，遠端已包含本機最新提交。之後可先以非互動模式重試，避免等待登入視窗。
 
 ## D-005：外部題目覆核與寫作回饋
 
