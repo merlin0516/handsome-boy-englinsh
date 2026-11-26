@@ -22,7 +22,7 @@ function writeCsv(fileName, rows) {
 }
 
 const reviewRows = [[
-  'question_id', 'level', 'skill', 'question', 'option_a', 'option_b', 'option_c', 'option_d',
+  'question_id', 'level', 'skill', 'reading_passage', 'question', 'option_a', 'option_b', 'option_c', 'option_d',
   'reviewer_answer', 'one_best_answer (yes/no/uncertain)', 'level_fit (yes/no/uncertain)',
   'wording_review (ok/revise)', 'evidence_review (sufficient/unclear/not_applicable)', 'comments'
 ]];
@@ -43,7 +43,7 @@ for (const [level, questions] of Object.entries(questionSets)) {
     const levelName = levelNames[level];
     const skillName = skillNames[question.tag];
     reviewRows.push([
-      questionId, levelName, skillName, question.prompt, ...question.choices,
+      questionId, levelName, skillName, question.passage || '', question.prompt, ...question.choices,
       '', '', '', '', '', ''
     ]);
     keyRows.push([
