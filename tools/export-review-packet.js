@@ -28,11 +28,13 @@ const reviewRows = [[
 ]];
 const keyRows = [['question_id', 'level', 'skill', 'suggested_answer', 'answer_text', 'explanation']];
 let total = 0;
+const questionCounts = {};
 
 for (const [level, questions] of Object.entries(questionSets)) {
-  if (!Object.hasOwn(levelNames, level) || questions.length !== 16) {
+  if (!Object.hasOwn(levelNames, level) || !questions.length) {
     throw new Error(`Unexpected question set: ${level} (${questions.length} items)`);
   }
+  questionCounts[level] = questions.length;
   questions.forEach((question, index) => {
     if (!skillNames[question.tag] || question.choices.length !== 4 || question.answer < 0 || question.answer >= 4) {
       throw new Error(`Invalid question data: ${level}:${index + 1}`);
@@ -52,7 +54,8 @@ for (const [level, questions] of Object.entries(questionSets)) {
   });
 }
 
-if (total !== 48) throw new Error(`Expected 48 questions, found ${total}`);
+if (!total) throw new Error('Question bank is empty');
 writeCsv('reviewer-questions.csv', reviewRows);
 writeCsv('reviewer-answer-key.csv', keyRows);
-process.stdout.write(`Exported answer-hidden review sheet and separate answer key for ${total} questions.\n`);
+const levelSummary = Object.entries(questionCounts).map(([level, count]) => `${levelNames[level]} ${count} 題`).join('、');
+process.stdout.write(`Exported answer-hidden review sheet and separate answer key for ${total} questions (${levelSummary}).\n`);
